@@ -8,7 +8,10 @@ LOGFILE=/tmp/$TIMESTAMP-$SCRIPT_NAME.log
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
-N="e[0m"
+N="\e[0m"
+
+echo "Please Enter DB  Password:"
+read -s mysql_root_password
 
 VALIDATE() {
 
@@ -40,11 +43,11 @@ if [ $USERID -ne 0 ]
   systemctl start mysqld &>>$LOGFILE 
   VALIDATE $? "Starting MySql"
 
-  mysql -h db.daws78s.online -uroot -pExpenseApp@1 -e 'show databases;' &>>$LOGFILE
+  mysql -h db.daws78s.online -uroot -p${mysql_root_password} -e 'show databases;' &>>$LOGFILE
    if [ $? -eq 0 ]
     then 
-         mysql_secure_installation --set-root-pass ExpenseApp@1  &>>$LOGFILE 
+         mysql_secure_installation --set-root-pass ${mysql_root_password}  &>>$LOGFILE 
          VALIDATE  $? "SettingUp Root Password"
     else 
-         echo "MySql Root Password is already setup..$Y SKIPPING $N" 
+         echo -e "MySql Root Password is already setup..$Y SKIPPING $N" 
     fi          
